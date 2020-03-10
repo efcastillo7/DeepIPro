@@ -1,11 +1,13 @@
 from random import randint
+import os
+basedir = os.path.expanduser('~/ryu/ryu/app/DeepIPro/')
 import signal
 import cpu_usage as cpu
 from subprocess import Popen, PIPE, call
 import time
 import sys
-sys.path.insert(0, '/home/ryu/ryu/ryu/app/deep-ipro/database/')
-sys.path.insert(0, '/home/ryu/ryu/ryu/app/deep-ipro/tools/')
+sys.path.insert(0, basedir + 'database/')
+sys.path.insert(0, basedir + 'tools/')
 import ConnectionBD_v2
 from write_csv import *
 from bytes_to import *
@@ -40,7 +42,7 @@ class Simulator(object):
 		self.bandwith_channel = 1000
 
 		self.count_iteration = 1
-		self.csv_file = "/home/ryu/ryu/ryu/app/deep-ipro/results/network_state.csv"
+		self.csv_file = basedir + "results/network_state.csv"
 		self.csv_columns = ['row','load_tx','load_rx','cpu','frequency', 'reward']
 
 		if (path.exists(self.csv_file)):

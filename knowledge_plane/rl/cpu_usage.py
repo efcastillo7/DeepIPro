@@ -1,14 +1,15 @@
 from __future__ import (unicode_literals, division, print_function,
                         absolute_import)
+import os
+basedir = os.path.expanduser('~/ryu/ryu/app/DeepIPro/')
 import sys
-sys.path.insert(0, '/home/ryu/ryu/intelligentProbing/')
+sys.path.insert(0, basedir)
 #from write_csv import *
 import os.path as path
 import time
 import argparse
-sys.path.insert(0, '/home/ryu/ryu/ryu/app/intelligentProbing/database/')
+sys.path.insert(0, basedir + 'database/')
 #import ConnectionBD_v2
-
 
 def get_percent(process):
     try:

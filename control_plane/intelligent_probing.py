@@ -3,6 +3,8 @@ from ryu.ofproto import ofproto_v1_3
 from ryu.lib.packet import packet
 from ryu.lib.packet import ethernet
 from ryu.lib.packet import ether_types
+import os
+basedir = os.path.expanduser('~/ryu/ryu/app/DeepIPro/')
 
 from operator import attrgetter
 from ryu.app import simple_switch_13
@@ -13,7 +15,7 @@ from ryu.controller.ofp_event import EventOFPErrorMsg
 from ryu.lib import hub
 import json
 import sys
-sys.path.insert(0, '/home/ryu/ryu/ryu/app/intelligentProbing/database/')
+sys.path.insert(0, basedir + 'database/')
 import ConnectionBD_v2
 
 import random
@@ -28,7 +30,7 @@ class IntelligentProbing(simple_switch_13.SimpleSwitch13):
         self.monitor_thread = hub.spawn(self._monitor)
 
         self.mac_to_port = {}
-    """    
+    """
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
         datapath = ev.msg.datapath
@@ -135,11 +137,11 @@ class IntelligentProbing(simple_switch_13.SimpleSwitch13):
                 self.logger.debug('unregister datapath: %016x', datapath.id)
                 del self.datapaths[datapath.id]
 
-    def _monitor(self):        
+    def _monitor(self):
         while True:
             probing_frequency = ConnectionBD_v2.getProbingFrequency()
             #probing_frequency = 6
-            print("PROBING TO...",probing_frequency)    
+            print("PROBING TO...",probing_frequency)
             for dp in self.datapaths.values():
                 self._request_stats(dp)
             hub.sleep(probing_frequency)
@@ -171,11 +173,11 @@ class IntelligentProbing(simple_switch_13.SimpleSwitch13):
         body = ev.msg.body
         flow_statistics = {}
         self.logger.debug('FLOWS----:')
-        
+
         for stat in sorted([flow for flow in body if flow.priority == 1],
                            key=lambda flow: (flow.match['in_port'],
                                              flow.match['eth_dst'])):
-            
+
             flow_statistics['id_datapath'] = ev.msg.datapath.id
             flow_statistics['in_port'] = stat.match['in_port']
             flow_statistics['eth_dst'] = stat.match['eth_dst']
@@ -185,15 +187,15 @@ class IntelligentProbing(simple_switch_13.SimpleSwitch13):
             flow_statistics['idle_timeout'] = stat.idle_timeout
             flow_statistics['hard_timeout'] = stat.hard_timeout
             flow_statistics['duration_sec'] = stat.duration_sec
-            self.logger.debug('IDLE TIMEOUT: %016x', stat.idle_timeout)     
+            self.logger.debug('IDLE TIMEOUT: %016x', stat.idle_timeout)
             #ConnectionBD_v2.insertStatFlow(flow_statistics)
 
     @set_ev_cls(ofp_event.EventOFPPortStatsReply, MAIN_DISPATCHER)
     def _port_stats_reply_handler(self, ev):
         body = ev.msg.body
         port_statistics = {}
-                
-        for stat in sorted(body, key=attrgetter('port_no')):            
+
+        for stat in sorted(body, key=attrgetter('port_no')):
             port_statistics['id_datapath'] = ev.msg.datapath.id
             port_statistics['port_number'] = stat.port_no
             port_statistics['rx_packets']  = stat.rx_packets
@@ -227,4 +229,4 @@ class IntelligentProbing(simple_switch_13.SimpleSwitch13):
         msg = ev.msg
         self.logger.info('OFPErrorMsg received: type=0x%02x code=0x%02x '
                          'message=%s',
-                        msg.type, msg.code, hex_array(msg.data))        
+                        msg.type, msg.code, hex_array(msg.data))

@@ -1,9 +1,11 @@
 import time
+import os
+basedir = os.path.expanduser('~/ryu/ryu/app/DeepIPro/')
 import random
 from collections import OrderedDict
 import numpy as np
 import sys
-sys.path.insert(0, '/home/ryu/ryu/ryu/app/intelligentProbing/database/')
+sys.path.insert(0, basedir + 'database/')
 import ConnectionBD_v2
 
 from simulator import Simulator
@@ -294,7 +296,7 @@ class Environment(object):
 
         if agent is self.primary_agent:
             if state['deadline'] >= 0:
-                reward += float(self.gaussian(load_value_tx+load_value_rx, self.goal_load, self.sigma)) + float(self.gaussian(cpu_value,self.goal_cpu, self.sigma)) 
+                reward += float(self.gaussian(load_value_tx+load_value_rx, self.goal_load, self.sigma)) + float(self.gaussian(cpu_value,self.goal_cpu, self.sigma))
                 output_str = str(self.trial) + ". Environment.act(): Primary agent has reached destination!\n"  # [debug]
                 # Record the success trial
                 self.success_trials.append(True)
